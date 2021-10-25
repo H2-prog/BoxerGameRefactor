@@ -10,7 +10,9 @@ Spillet skal overholde følgende krav:
  
 ## Eksempel:
 f.eks ```{player1.name} hits {player2.name} for {player1.strength + player1.crit}```
+
 kunne godt refactors til 
+
 f.eks 
 ```
 {player1.name} hits {player2.name} for (dmg(a, b))
