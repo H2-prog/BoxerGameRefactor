@@ -4,12 +4,9 @@ namespace BoxerGamerRefactor
 {
     class BoxingGame
     {
-
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Setup();
-            game.Loop();
+            ConsoleGameFactory<BoxerGame>.Create();
         }
 
         /*

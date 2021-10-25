@@ -2,7 +2,7 @@
 
 namespace BoxerGamerRefactor
 {
-    public class Game
+    public class GameState
     {
         private Boxer _player1;
         private Boxer _player2;
@@ -10,7 +10,7 @@ namespace BoxerGamerRefactor
 
         private readonly Random random;
 
-        public Game()
+        public GameState()
         {
             random = new Random();
             _player1 = new Boxer(random)
@@ -58,14 +58,14 @@ namespace BoxerGamerRefactor
                             break;
                         }
 
-                        var key = ScreenViews.ChooseAttack();
-                        switch(key.Key)
-                        {
-                            case ConsoleKey.W: Attack(1, 4); break;
-                            case ConsoleKey.D: Attack(1, 12); break;
-                            case ConsoleKey.Escape: Environment.Exit(0); break;
-                            default: Console.WriteLine("It was not the you were told to press!"); break; 
-                        }
+                        //var key = ScreenViews.ShowAndChooseAttack();
+                        //switch(key.Key)
+                        //{
+                        //    case ConsoleKey.W: Attack(1, 4); break;
+                        //    case ConsoleKey.D: Attack(1, 12); break;
+                        //    case ConsoleKey.Escape: Environment.Exit(0); break;
+                        //    default: Console.WriteLine("It was not the you were told to press!"); break; 
+                        //}
                     }
 
                     if (_player2.Health <= 0)

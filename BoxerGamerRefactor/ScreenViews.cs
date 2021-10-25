@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace BoxerGamerRefactor
 {
@@ -6,20 +8,41 @@ namespace BoxerGamerRefactor
     {
         public static void GetReadyForNextRound(int round)
         {
-            Console.WriteLine("");
+            AddEmptyLine();
             Console.WriteLine($"================= Round {round} has ended get ready for the next round =================");
-            Console.WriteLine("");
+            AddEmptyLine();
         }
 
-        public static ConsoleKeyInfo ChooseAttack()
+        public static void ShowBoxerHitMessage(Boxer attacker, Boxer victim, BoxerDamageResult damageResult)
         {
-            Console.WriteLine();
+            var outputLine = $"{attacker.Name} Hits {victim.Name} for {damageResult.Damage}, {victim.Name} takes {damageResult.Damage} Damage, {victim.Name} now has {damageResult.NewHealth} health left";
+            Console.WriteLine(outputLine);
+        }
 
-            Console.WriteLine("Press = W = for a normal Attack");
-            Console.WriteLine("Press = D = for a power Attack");
+        public static void AddEmptyLine(uint lines = 1)
+        {
+            if(lines == uint.MinValue)
+            {
+                lines = 1;
+            }
+
+            for (int i = 0; i < lines; i++)
+            {
+                Console.WriteLine("");
+            }
+        }
+
+        public static ConsoleKeyInfo ShowAndChooseAttack(IEnumerable<BoxerAttack> attacks)
+        {
+            AddEmptyLine();
+
+            foreach (var attack in attacks)
+            {
+                Console.WriteLine($"Press = {attack.Key} = for a {attack.Title}");
+            }
             Console.WriteLine("Which attack do you want to perform");
 
-            return Console.ReadKey();
+            return Console.ReadKey(true);
         }
 
         public static string GetInputAsString()
