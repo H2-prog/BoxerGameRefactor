@@ -8,14 +8,14 @@ Spillet skal overholde følgende krav:
  - Hver runde er 10 slag 
  - Hver gang der er matematiske udregninger skal det i en seperat funktion
  
-## Eksempel:
-f.eks ```{player1.name} hits {player2.name} for {player1.strength + player1.crit}```
+## Eksempel
+f.eks ```"{player1.name} hits {player2.name} for {player1.strength + player1.crit}"```
 
 kunne godt refactors til 
 
 f.eks 
 ```
-{player1.name} hits {player2.name} for (dmg(a, b))
+"{player1.name} hits {player2.name} for (dmg(a, b))"
 
 public int dmg(int a, int b) {
 	a = 2
