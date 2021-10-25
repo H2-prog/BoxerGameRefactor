@@ -8,6 +8,12 @@ namespace BoxerGamerRefactor
         public int Damage { get; set; }
     }
 
+    public class BoxerRegenResult
+    {
+        public int NewHealth { get; set; }
+        public int RegenAmount { get; set; }
+    }
+
     public class Boxer
     {
         public string Name { get; set; }
@@ -23,11 +29,11 @@ namespace BoxerGamerRefactor
             this.random = random;
         }
 
-        public int Regen()
+        public BoxerRegenResult Regen()
         {
             var regen = CalculateRegen();
             Health += regen;
-            return Health;
+            return new BoxerRegenResult { NewHealth = Health, RegenAmount = regen };
         }
 
         public BoxerDamageResult Damage(int modifier)

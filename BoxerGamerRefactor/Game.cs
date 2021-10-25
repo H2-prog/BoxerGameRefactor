@@ -16,14 +16,14 @@ namespace BoxerGamerRefactor
 
         public Game(string player1Name, string player2Name, int matchesToFight)
         {
-            var player1 = new Boxer(random)
+            player1 = new Boxer(random)
             {
                 Name = player1Name,
                 Health = 200,
                 Stamina = 10,
                 Strength = 5
             };
-            var player2 = new Boxer(random)
+            player2 = new Boxer(random)
             {
                 Name = player2Name, 
                 Health = 110,
@@ -63,8 +63,6 @@ namespace BoxerGamerRefactor
 
                         var input = Console.ReadLine();
 
-                        int player1Regen;
-                        int player2Regen;
                         switch (input)
                         {
                             case "w":
@@ -75,11 +73,8 @@ namespace BoxerGamerRefactor
                                     Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player2.Name, player1.Name, player2DamageResult.Damage, player1DamageResult.NewHealth);
                                     Console.WriteLine("");
 
-                                    player1Regen = player1.Regen();
-                                    player2Regen = player2.Regen();
-
-                                    Console.WriteLine("{0} Regains some of his stamina back and recives {1} health, now {0} has {2} health", player1.Name, player1Regen, player1.Health);
-                                    Console.WriteLine("{0} Regains some of his stamina back and recives {1} health, now {0} has {2} health", player2.Name, player2Regen, player2.Health);
+                                    RegenBoxer(player1);
+                                    RegenBoxer(player2);
                                 }
                                 break;
                             case "d":
@@ -91,11 +86,8 @@ namespace BoxerGamerRefactor
                                     Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player2.Name, player1.Name, player2DamageResult.Damage, player1DamageResult.NewHealth);
                                     Console.WriteLine("");
 
-                                    player1Regen = player1.Regen();
-                                    player2Regen = player2.Regen();
-
-                                    Console.WriteLine("{0} Regains some of his stamina back and recives {1} health, now {0} has {2} health", player1.Name, player1Regen, player1.Health);
-                                    Console.WriteLine("{0} Regains some of his stamina back and recives {1} health, now {0} has {2} health", player2.Name, player2Regen, player2.Health);
+                                    RegenBoxer(player1);
+                                    RegenBoxer(player2);
                                 }
                                 break;
                             case "color":
@@ -146,6 +138,12 @@ namespace BoxerGamerRefactor
                     }
                 }
             }
+        }
+
+        private void RegenBoxer(Boxer boxer)
+        {
+            var boxerRegen = boxer.Regen();
+            Console.WriteLine($"{boxer.Name} Regains some of his stamina back and recives {boxerRegen.RegenAmount} health, now {boxer.Name} has {boxerRegen.NewHealth} health");
         }
     }
 }
