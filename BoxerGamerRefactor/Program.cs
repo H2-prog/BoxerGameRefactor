@@ -6,7 +6,7 @@ namespace BoxerGamerRefactor
     {
         static void Main(string[] args)
         {
-            ConsoleGameFactory<BoxerGame>.Create();
+            ConsoleGameFactory.Create<BoxerGame>();
         }
 
         /*

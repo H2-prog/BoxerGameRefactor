@@ -1,9 +1,9 @@
 ﻿namespace BoxerGamerRefactor
 {
-    public static class ConsoleGameFactory<TGame> 
-        where TGame : ConsoleGame, new()
+    public static class ConsoleGameFactory
     {
-        public static TGame Create()
+        public static TGame Create<TGame>()
+            where TGame : ConsoleGame, new()
         {
             TGame game = new TGame();
             game.GameLoop();

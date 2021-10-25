@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace BoxerGamerRefactor
 {
@@ -12,9 +13,8 @@ namespace BoxerGamerRefactor
 
         private List<BoxerAttack> _attacks = new List<BoxerAttack>
         {
-            new BoxerAttack("Block", ConsoleKey.A, 0, 1),
-            new BoxerAttack("normal Attack", ConsoleKey.W, 1, 4),
-            new BoxerAttack("power Attack", ConsoleKey.D, 1, 12),
+            new BoxerAttack("normal Attack", ConsoleKey.W, 4, 1),
+            new BoxerAttack("power Attack", ConsoleKey.D, 12, 1)
         };
 
         private Random _random;
