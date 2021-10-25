@@ -7,20 +7,12 @@ namespace BoxerGamerRefactor
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter your name player 1");
-            var player1Name = Console.ReadLine();
-
-            Console.WriteLine("Enter your name player 2");
-            var player2Name = Console.ReadLine();
-
-            Console.WriteLine("How many rounds do you want to fight");
-            var matches = Convert.ToInt32(Console.ReadLine());
-
-            Game game = new Game(player1Name, player2Name, matches);
+            Game game = new Game();
+            game.Setup();
             game.Loop();
-            //TempGame();
         }
 
+        /*
         public static void TempGame()
         {
             for (int BoxingSimmatches = 0; BoxingSimmatches <= matches; BoxingSimmatches++)
@@ -144,5 +136,6 @@ namespace BoxerGamerRefactor
                 }
             }
         }
+        */
     }
 }
