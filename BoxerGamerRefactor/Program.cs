@@ -7,46 +7,24 @@ namespace BoxerGamerRefactor
 
         static void Main(string[] args)
         {
-            TempGame();
+            Console.WriteLine("Enter your name player 1");
+            var player1Name = Console.ReadLine();
+
+            Console.WriteLine("Enter your name player 2");
+            var player2Name = Console.ReadLine();
+
+            Console.WriteLine("How many rounds do you want to fight");
+            var matches = Convert.ToInt32(Console.ReadLine());
+
+            Game game = new Game(player1Name, player2Name, matches);
+            game.Loop();
+            //TempGame();
         }
 
         public static void TempGame()
         {
-            var player1 = new Boxer();
-            var player2 = new Boxer();
-
-            player1.Health = 200;
-            player1.Stamina = 10;
-            player1.Strength = 5;
-
-            player2.Health = 110;
-            player2.Stamina = 9;
-            player2.Strength = 15;
-
-            Random rnd = new Random();
-
-            string player1Name;
-
-            Console.WriteLine("Enter your name player 1");
-            player1Name = Console.ReadLine();
-
-            player1.Name = player1Name;
-
-            string player2Name;
-
-            Console.WriteLine("Enter your name player 2");
-            player2Name = Console.ReadLine();
-
-            player2.Name = player2Name;
-
-            Console.WriteLine("How many rounds do you want to fight");
-
-            int matches;
-            matches = Convert.ToInt32(Console.ReadLine());
-
             for (int BoxingSimmatches = 0; BoxingSimmatches <= matches; BoxingSimmatches++)
             {
-
                 for (int round = 0; round < 10; round++)
                 {
                     if (player1.Health <= 0 || player2.Health <= 0)
@@ -57,12 +35,10 @@ namespace BoxerGamerRefactor
                         break;
                     }
 
-
                     for (int i = 0; i < 10; i++)
                     {
                         if (player1.Health <= 0 || player2.Health <= 0)
                         {
-
                             break;
                         }
 
@@ -72,10 +48,7 @@ namespace BoxerGamerRefactor
                         Console.WriteLine("Press = D = for a normal Attack");
                         Console.WriteLine("Which attack do you want to perform");
 
-
                         var input = Console.ReadLine();
-
-                        var random = new Random();
 
                         var regen1 = 0;
                         var regen2 = 0;
@@ -87,12 +60,14 @@ namespace BoxerGamerRefactor
                                 var dmg1 = rnd.Next(player1.Strength + 4);
                                 var dmg2 = rnd.Next(player2.Strength + 1);
 
-                                Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player1.Name, player2.Name, dmg1, player2.Health -= dmg1);
-                                Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player2.Name, player1.Name, dmg2, player1.Health -= dmg2);
+                                var remainingHealthPlayer2 = player2.Damage(dmg1);
+                                var remainingHealthPlayer1 = player1.Damage(dmg2);
+                                Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player1.Name, player2.Name, dmg1, remainingHealthPlayer2);
+                                Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player2.Name, player1.Name, dmg2, remainingHealthPlayer1);
                                 Console.WriteLine("");
 
-                                regen1 = random.Next(0, player1.Stamina);
-                                regen2 = random.Next(0, player2.Stamina);
+                                regen1 = rnd.Next(0, player1.Stamina);
+                                regen2 = rnd.Next(0, player2.Stamina);
 
                                 player1.Health = regen1 + player1.Health;
                                 player2.Health = regen2 + player2.Health;
@@ -110,8 +85,8 @@ namespace BoxerGamerRefactor
                                 Console.WriteLine("{0} Hits {1} for {2}, {1} takes {2} Damage, {1} now has {3} health left", player2.Name, player1.Name, dmg2, player1.Health -= dmg2);
                                 Console.WriteLine("");
 
-                                regen1 = random.Next(0, player1.Stamina);
-                                regen2 = random.Next(0, player2.Stamina);
+                                regen1 = rnd.Next(0, player1.Stamina);
+                                regen2 = rnd.Next(0, player2.Stamina);
 
                                 player1.Health = regen1 + player1.Health;
                                 player2.Health = regen2 + player2.Health;
@@ -128,13 +103,8 @@ namespace BoxerGamerRefactor
                             default:
                                 Console.WriteLine("It was not the keys you where told to press");
                                 break;
-
                         }
-
-
-
                     }
-
 
                     if (player2.Health <= 0)
                     {
@@ -149,7 +119,6 @@ namespace BoxerGamerRefactor
                         Console.WriteLine(player2.Name + " knocked down " + player1.Name + " number of knock downs " + player2.Victories++);
                         player1.Health = 100;
                         player2.Health = 200;
-
                     }
 
                     if (player1.Health <= 0 || player2.Health <= 0)
