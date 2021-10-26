@@ -2,7 +2,7 @@
 {
     public interface IBoxerGameController
     {
-        bool HasRoundEnded(Boxer player, Boxer computer, IBoxerGameRenderer renderer);
+        bool HasRoundEnded(Boxer player, Boxer computer);
 
         void AttackBoxer(Boxer player1, Boxer player2, BoxerAttack boxerAttack);
         void RegenBoxer(Boxer boxer);
@@ -10,10 +10,17 @@
 
     public class BoxerGameController : IBoxerGameController
     {
-        public bool HasRoundEnded(Boxer player, Boxer computer, IBoxerGameRenderer renderer)
+        private IBoxerGameRenderer Renderer { get; }
+
+        public BoxerGameController(IBoxerGameRenderer renderer)
         {
-            CheckIfBoxerIsKnockedOut(player, computer, renderer);
-            CheckIfBoxerIsKnockedOut(computer, player, renderer);
+            Renderer = renderer;
+        }
+
+        public bool HasRoundEnded(Boxer player, Boxer computer)
+        {
+            CheckIfBoxerIsKnockedOut(player, computer);
+            CheckIfBoxerIsKnockedOut(computer, player);
             return player.Knockedout && computer.Knockedout;
         }
 
@@ -35,12 +42,12 @@
             System.Console.WriteLine($"{boxer.Name} Regains some of his stamina back and recives {boxerRegen.RegenAmount} health, now {boxer.Name} has {boxerRegen.NewHealth} health");
         }
 
-        private void CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim, IBoxerGameRenderer renderer)
+        private void CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim)
         {
             if (victim.Health <= 0)
             {
                 attacker.Victories++;
-                renderer.RenderText($"{attacker.Name} knocked down {victim.Name}. Number of knock downs {attacker.Victories}", 2, 20);
+                Renderer.RenderText($"{attacker.Name} knocked down {victim.Name}. Number of knock downs {attacker.Victories}", 2, 20);
             }
         }
     }

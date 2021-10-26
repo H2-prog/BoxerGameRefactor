@@ -16,14 +16,28 @@ namespace BoxerGamerRefactor
 
     public class BoxerGameInputHandler : IBoxerGameInputHandler
     {
+        private IBoxerGameRenderer Renderer { get; }
+
+        public BoxerGameInputHandler(IBoxerGameRenderer renderer)
+        {
+            Renderer = renderer;
+        }
+
         public BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks, out ConsoleKey consoleKey)
         {
-            Console.WriteLine("");
+            int top = 12;
+            Renderer.RenderText("====== Choose an Attack ======", 2, top);
             foreach (var attack in attacks)
             {
-                Console.WriteLine($"Press = {attack.Key} = for a {attack.Title}");
+                top++;
+                Console.SetCursorPosition(2, top);
+
+                Console.Write("Press ");
+                Console.ForegroundColor = attack.ForegroundColor;
+                Console.Write(attack.Key);
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine($" for a {attack.Title}");
             }
-            Console.WriteLine("Which attack do you want to perform");
             var consoleInput = Console.ReadKey(true);
             consoleKey = consoleInput.Key;
 

@@ -18,17 +18,15 @@ namespace BoxerGamerRefactor
         private Boxer _computer;
         private int _rounds;
         private bool _playersTurn = true;
-        //private int _boxingSimmatches = 0;4
-        //private int _currentRound = 0;
 
         const int SECONDS_BETWEEN_ATTACK = 1;
         const int MAX_ATTACKS = 10;
 
         private List<BoxerAttack> _attacks = new List<BoxerAttack>
         {
-            new BoxerAttack("normal Attack", ConsoleKey.W, 4, 1),
-            new BoxerAttack("power Attack", ConsoleKey.D, 12, 1),
-            new BoxerAttack("super duper power killing Attack", ConsoleKey.F, 60, 250),
+            new BoxerAttack("normal Attack", ConsoleKey.W, ConsoleColor.Red, 4, 1),
+            new BoxerAttack("power Attack", ConsoleKey.D, ConsoleColor.Yellow, 12, 1),
+            new BoxerAttack("super duper power killing Attack", ConsoleKey.F, ConsoleColor.Green, 60, 250),
         };
 
         public override void Setup()
@@ -65,7 +63,7 @@ namespace BoxerGamerRefactor
                 {
                     RenderBoxerStats(round, attack);
 
-                    if(GameController.HasRoundEnded(_player, _computer, Renderer))
+                    if (GameController.HasRoundEnded(_player, _computer))
                     {
                         break;
                     }
@@ -73,23 +71,20 @@ namespace BoxerGamerRefactor
                     if (_playersTurn)
                     {
                         var choosenAttack = Input.ChooseAttack(_attacks, out ConsoleKey key);
-                        if(key == ConsoleKey.Escape)
+                        ListenForEscapeKey(key);
+                        if (choosenAttack != null)
                         {
-                            Exit();
-                            return;
+                            _computer.Damage(choosenAttack.PlayerModifier);
                         }
-                        _computer.Damage(choosenAttack.PlayerModifier);
-                        //GameController.AttackBoxer(_player, _computer, choosenAttack);
                         Trace.WriteLine($"Player: {_player.Health}/{_player.StartHealth} ({Utils.CalculatePercent(_player.Health, _player.StartHealth)}%)");
                         Trace.WriteLine($"Computer: {_computer.Health}/{_computer.StartHealth} ({Utils.CalculatePercent(_computer.Health, _computer.StartHealth)}%)");
-                        Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                     }
                     else
                     {
                         var choosenAttack = AIHandler.ChooseRandomAttackIn(_attacks);
                         _player.Damage(choosenAttack.ComputerModifier);
-                        Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                     }
+                    Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                 }
 
                 if (_computer.Knockedout)
@@ -201,6 +196,15 @@ namespace BoxerGamerRefactor
                 ScreenViews.AddSeperator();
             }
             */
+        }
+
+        private void ListenForEscapeKey(ConsoleKey key)
+        {
+            if (key == ConsoleKey.Escape)
+            {
+                Exit();
+                return;
+            }
         }
 
         private void RenderMatchWinner()
