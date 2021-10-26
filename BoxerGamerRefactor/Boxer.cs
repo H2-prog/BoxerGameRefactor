@@ -18,8 +18,10 @@ namespace BoxerGamerRefactor
     {
         public string Name { get; set; }
         public int Health { get; set; }
+        public int StartHealth { get; set; }
         public int Strength { get; set; }
         public int Stamina { get; set; }
+        public int StartStamina { get; set; }
         public int Victories { get; set; }
         public bool Dead { get => Health <= 0; }
 

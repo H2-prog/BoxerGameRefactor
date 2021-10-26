@@ -8,15 +8,13 @@ namespace BoxerGamerRefactor
     {
         public static void GetReadyForNextRound(int round)
         {
-            AddEmptyLine();
-            Console.WriteLine($"================= Round {round} has ended get ready for the next round =================");
-            AddEmptyLine();
+            AddText($"================= Round {round} has ended get ready for the next round =================");
         }
 
         public static void ShowBoxerHitMessage(Boxer attacker, Boxer victim, BoxerDamageResult damageResult)
         {
             var outputLine = $"{attacker.Name} Hits {victim.Name} for {damageResult.Damage}, {victim.Name} takes {damageResult.Damage} Damage, {victim.Name} now has {damageResult.NewHealth} health left";
-            Console.WriteLine(outputLine);
+            AddText(outputLine);
         }
 
         public static void AddText(string text)
@@ -57,12 +55,11 @@ namespace BoxerGamerRefactor
         public static ConsoleKeyInfo ShowAndChooseAttack(IEnumerable<BoxerAttack> attacks)
         {
             AddEmptyLine();
-
             foreach (var attack in attacks)
             {
-                Console.WriteLine($"Press = {attack.Key} = for a {attack.Title}");
+                AddText($"Press = {attack.Key} = for a {attack.Title}");
             }
-            Console.WriteLine("Which attack do you want to perform");
+            AddText("Which attack do you want to perform");
 
             return Console.ReadKey(true);
         }
@@ -77,6 +74,11 @@ namespace BoxerGamerRefactor
             var consoleInput = Console.ReadLine();
             var success = int.TryParse(consoleInput, out int value);
             return success ? value : 0;
+        }
+
+        public static void Clear()
+        {
+            Console.Clear();
         }
     }
 }

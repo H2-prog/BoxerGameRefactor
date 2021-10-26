@@ -2,12 +2,19 @@
 {
     public interface IBoxerGameController
     {
+        bool HasRoundEnded(int currentRound, int maxRounds);
+
         void AttackBoxer(Boxer player1, Boxer player2, BoxerAttack boxerAttack);
         void RegenBoxer(Boxer boxer);
     }
 
     public class BoxerGameController : IBoxerGameController
     {
+        public bool HasRoundEnded(int currentRound, int maxRounds)
+        {
+            return currentRound >= maxRounds;
+        }
+
         public void AttackBoxer(Boxer player1, Boxer player2, BoxerAttack boxerAttack)
         {
             var player1DamageResult = player1.Damage(boxerAttack.Player2Modifier);
