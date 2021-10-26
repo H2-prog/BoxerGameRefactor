@@ -40,8 +40,8 @@ namespace BoxerGamerRefactor
         public override void Start()
         {
             InitializeBoxers();
-            _player.Name = ScreenViews.ReadString("Enter your name");
-            _rounds = ScreenViews.ReadInt("How many rounds do you want to fight");
+            _player.Name = Input.ReadString("Enter your name");
+            _rounds = Input.ReadInt("How many rounds do you want to fight");
         }
 
         public override void Update()
