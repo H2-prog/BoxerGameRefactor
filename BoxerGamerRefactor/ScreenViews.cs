@@ -19,6 +19,29 @@ namespace BoxerGamerRefactor
             Console.WriteLine(outputLine);
         }
 
+        public static void AddText(string text)
+        {
+            Console.WriteLine(text);
+        }
+
+        public static void AddSeperator(int length = 90)
+        {
+            Console.WriteLine(new string('#', length));
+        }
+
+        public static void AddEmptyLine(uint lines = 1)
+        {
+            if (lines == uint.MinValue)
+            {
+                lines = 1;
+            }
+
+            for (int i = 0; i < lines; i++)
+            {
+                Console.WriteLine("");
+            }
+        }
+
         public static string ReadString(string text)
         {
             Console.WriteLine(text);
@@ -42,19 +65,6 @@ namespace BoxerGamerRefactor
             Console.WriteLine("Which attack do you want to perform");
 
             return Console.ReadKey(true);
-        }
-
-        public static void AddEmptyLine(uint lines = 1)
-        {
-            if (lines == uint.MinValue)
-            {
-                lines = 1;
-            }
-
-            for (int i = 0; i < lines; i++)
-            {
-                Console.WriteLine("");
-            }
         }
 
         public static string GetInputAsString()
