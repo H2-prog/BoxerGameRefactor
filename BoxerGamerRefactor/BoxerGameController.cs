@@ -39,7 +39,7 @@ namespace BoxerGamerRefactor
                 var choosenAttack = InputHandler.ChooseAttack(attacks);
                 if (choosenAttack == null)
                 {
-                    Console.WriteLine("It was not the you were told to press!");
+                    message = "It was not the you were told to press!";
                 }
                 else 
                 {

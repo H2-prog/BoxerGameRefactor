@@ -16,7 +16,6 @@ namespace BoxerGamerRefactor
         private IBoxerGameController GameController { get; set; }
         private IBoxerGameRenderer Renderer { get; set; }
         private IBoxerGameInputHandler Input { get; set; }
-        private IBoxerGameAIHandler AIHandler { get; set; }
 
         private Boxer _player;
         private Boxer _computer;
@@ -35,7 +34,6 @@ namespace BoxerGamerRefactor
             GameController = ServiceProvider.GetService<IBoxerGameController>();
             Renderer = ServiceProvider.GetService<IBoxerGameRenderer>();
             Input = ServiceProvider.GetService<IBoxerGameInputHandler>();
-            AIHandler = ServiceProvider.GetService<IBoxerGameAIHandler>();
         }
 
         public override void Start()
@@ -60,120 +58,29 @@ namespace BoxerGamerRefactor
                 }
                 Renderer.AddEmptyLine();
 
-                for (int attack = 0; attack < MAX_ATTACKS; attack++)
+                int attack1 = 0;
+                while (attack1 < MAX_ATTACKS && !GameController.HasRoundEnded(_player, _computer))
                 {
-                    RenderBoxerStats(round, attack);
+                    //for (int attack = 0; attack < MAX_ATTACKS; attack++)
+                    //{
+                        RenderBoxerStats(round, attack1);
 
-                    if (GameController.HasRoundEnded(_player, _computer))
-                    {
-                        break;
-                    }
-
-                    GameController.Attack(_playersTurn, _attacks, _player, _computer);
-                    Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
-                }
-
-                RenderRoundWinner();
-                Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
-            }
-
-            RenderMatchWinner();
-
-            /*
-            if (GameController.HasRoundEnded(_boxingSimmatches, _rounds))
-            {
-                var res = ScreenViews.ReadString("Do you want to restart the game? (Y/n)");
-                if(res.ToLower() == "y")
-                {
-                    ScreenViews.Clear();
-                    Start();
-                }
-                else
-                {
-                    ScreenViews.AddText("Game done! Waiting 2 seconds to quit the game...");
-                    Thread.Sleep(2 * 1000);
-                    Exit();
-                }
-            }
-
-            while (!GameController.HasRoundEnded(_boxingSimmatches, _rounds) && !(_player1.Dead || _player2.Dead))
-            {
-                ScreenViews.AddEmptyLine();
-                ScreenViews.AddSeperator();
-
-                if (_player1.Dead || _player2.Dead)
-                {
-                    _player1.Health = 200;
-                    _player2.Health = 110;
-
-                    // Wait for 10 seconds...
-                    ScreenViews.GetReadyForNextRound(_boxingSimmatches);
-                    Thread.Sleep(10 * 1000);
-                }
-                ScreenViews.AddEmptyLine();
-
-                for (_currentRound = 0; _currentRound < MAX_ROUNDS; _currentRound++)
-                {
-                    if (_player1.Dead || _player2.Dead)
-                    {
-                        break;
-                    }
-
-                    for (int i = 0; i < MAX_ATTACKS; i++)
-                    {
-                        if (_player1.Dead || _player2.Dead)
+                        if (GameController.HasRoundEnded(_player, _computer))
                         {
                             break;
                         }
 
-                        var consoleInput = ScreenViews.ShowAndChooseAttack(_attacks);
-                        var attack = (_attacks.Where(x => x.Key == consoleInput.Key)).FirstOrDefault();
-                        if (attack == null)
-                        {
-                            switch (consoleInput.Key)
-                            {
-                                case ConsoleKey.Escape: Exit(); break;
-                                default: ScreenViews.AddText("It was not the you were told to press!"); break;
-                            }
-                            continue;
-                        }
-                        GameController.AttackBoxer(_player1, _player2, attack);
-                    }
-
-                    if (_player2.Dead)
-                    {
-                        ScreenViews.AddEmptyLine();
-                        ScreenViews.AddText($"{_player1.Name} knocked down {_player2.Name} number of knock downs {++_player1.Victories}");
-                    }
-                    else if (_player1.Dead)
-                    {
-                        ScreenViews.AddEmptyLine();
-                        ScreenViews.AddText($"{_player2.Name} knocked down {_player1.Name} number of knock downs {++_player2.Victories}");
-                    }
-
-                    if (_player1.Dead || _player2.Dead)
-                    {
-                        ScreenViews.AddEmptyLine();
-                        ScreenViews.AddText($"{_player1.Name} Has won {_player1.Victories} Times");
-                        ScreenViews.AddText($"{_player2.Name} Has won {_player2.Victories} Times");
-                        ScreenViews.AddEmptyLine();
-                        ScreenViews.AddText("############################## We have a Winner ##################################");
-                        _currentRound++;
-                    }
-
-                    if (_player1.Victories > _player2.Victories || _player1.Health > _player2.Health)
-                    {
-                        ScreenViews.AddText($"{_player1.Name} is the winner of the round!");
-                    }
-                    else
-                    {
-                        ScreenViews.AddText($"{_player2.Name} is the winner of the round!");
-                    }
+                        GameController.Attack(_playersTurn, _attacks, _player, _computer);
+                        Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
+                    //}
+                    attack1++;
                 }
-                _boxingSimmatches++;
-                ScreenViews.AddSeperator();
+
+                RenderRoundWinner();
+                Thread.Sleep(SECONDS_BETWEEN_ROUND * 1000);
             }
-            */
+
+            RenderMatchWinner();
         }
 
         private void RenderRoundWinner()
