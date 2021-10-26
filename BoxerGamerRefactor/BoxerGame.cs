@@ -51,29 +51,22 @@ namespace BoxerGamerRefactor
                 {
                     _player.Health = _player.StartHealth;
                     _computer.Health = _computer.StartHealth;
-
-                    // Wait for 10 seconds...
-                    Renderer.RenderText($"================= Round {round} has ended get ready for the next round =================", 2, 26);
-                    Thread.Sleep(10 * 1000);
                 }
-                Renderer.AddEmptyLine();
 
-                int attack1 = 0;
-                while (attack1 < MAX_ATTACKS && !GameController.HasRoundEnded(_player, _computer))
+                for (int attack = 0; attack < MAX_ATTACKS; attack++)
                 {
-                    //for (int attack = 0; attack < MAX_ATTACKS; attack++)
-                    //{
-                        RenderBoxerStats(round, attack1);
+                    RenderBoxerStats(round, attack);
 
-                        if (GameController.HasRoundEnded(_player, _computer))
-                        {
-                            break;
-                        }
+                    GameController.CheckIfBoxerIsKnockedOut(_player, _computer);
+                    GameController.CheckIfBoxerIsKnockedOut(_computer, _player);
 
-                        GameController.Attack(_playersTurn, _attacks, _player, _computer);
-                        Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
-                    //}
-                    attack1++;
+                    if (GameController.HasRoundEnded(_player, _computer))
+                    {
+                        break;
+                    }
+
+                    GameController.Attack(_playersTurn, _attacks, _player, _computer);
+                    Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                 }
 
                 RenderRoundWinner();

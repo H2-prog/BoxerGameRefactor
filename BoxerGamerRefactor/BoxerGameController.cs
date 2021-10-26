@@ -8,6 +8,7 @@ namespace BoxerGamerRefactor
     public interface IBoxerGameController
     {
         bool HasRoundEnded(Boxer player, Boxer computer);
+        bool CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim);
         void Attack(bool playersTurn, IEnumerable<BoxerAttack> attacks, Boxer player, Boxer computer);
     }
 
@@ -26,8 +27,6 @@ namespace BoxerGamerRefactor
 
         public bool HasRoundEnded(Boxer player, Boxer computer)
         {
-            CheckIfBoxerIsKnockedOut(player, computer);
-            CheckIfBoxerIsKnockedOut(computer, player);
             return player.Knockedout || computer.Knockedout;
         }
 
@@ -58,13 +57,14 @@ namespace BoxerGamerRefactor
             Renderer.RenderText(message, 2, 18);
         }
 
-        private void CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim)
+        public bool CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim)
         {
             if (victim.Knockedout)
             {
                 attacker.Victories++;
                 Renderer.RenderText($"{attacker.Name} knocked down {victim.Name}. Number of knock downs {attacker.Victories}", 2, 20);
             }
+            return victim.Knockedout;
         }
     }
 }
