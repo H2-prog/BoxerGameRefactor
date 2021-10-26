@@ -1,11 +1,10 @@
-﻿using System;
-
-namespace BoxerGamerRefactor
+﻿namespace BoxerGamerRefactor
 {
     class BoxingGame
     {
         static void Main(string[] args)
         {
+            ConsoleGameFactory.AddScoped<IBoxerGameController, BoxerGameController>();
             ConsoleGameFactory.Create<BoxerGame>();
         }
 

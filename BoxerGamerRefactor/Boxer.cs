@@ -22,35 +22,18 @@ namespace BoxerGamerRefactor
         public int Stamina { get; set; }
         public int Victories { get; set; }
 
-        private Random random;
-
-        public Boxer(Random random)
-        {
-            this.random = random;
-        }
-
         public BoxerRegenResult Regen()
         {
-            var regen = CalculateRegen();
+            var regen = Utils.CalculateRegen(this);
             Health += regen;
             return new BoxerRegenResult { NewHealth = Health, RegenAmount = regen };
         }
 
         public BoxerDamageResult Damage(int modifier)
         {
-            var damage = CalculateDamage(modifier);
+            var damage = Utils.CalculateDamage(this, modifier);
             Health -= damage;
             return new BoxerDamageResult { NewHealth = Health, Damage = damage };
-        }
-
-        private int CalculateRegen()
-        {
-            return random.Next(0, Stamina); 
-        }
-
-        private int CalculateDamage(int modifier)
-        {
-            return random.Next(Strength + modifier);
         }
     }
 }

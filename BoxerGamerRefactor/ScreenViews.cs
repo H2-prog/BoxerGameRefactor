@@ -19,17 +19,16 @@ namespace BoxerGamerRefactor
             Console.WriteLine(outputLine);
         }
 
-        public static void AddEmptyLine(uint lines = 1)
+        public static string ReadString(string text)
         {
-            if(lines == uint.MinValue)
-            {
-                lines = 1;
-            }
+            Console.WriteLine(text);
+            return GetInputAsString();
+        }
 
-            for (int i = 0; i < lines; i++)
-            {
-                Console.WriteLine("");
-            }
+        public static int ReadInt(string text)
+        {
+            Console.WriteLine(text);
+            return GetInputAsInt();
         }
 
         public static ConsoleKeyInfo ShowAndChooseAttack(IEnumerable<BoxerAttack> attacks)
@@ -43,6 +42,19 @@ namespace BoxerGamerRefactor
             Console.WriteLine("Which attack do you want to perform");
 
             return Console.ReadKey(true);
+        }
+
+        public static void AddEmptyLine(uint lines = 1)
+        {
+            if (lines == uint.MinValue)
+            {
+                lines = 1;
+            }
+
+            for (int i = 0; i < lines; i++)
+            {
+                Console.WriteLine("");
+            }
         }
 
         public static string GetInputAsString()

@@ -13,13 +13,13 @@ namespace BoxerGamerRefactor
         public GameState()
         {
             random = new Random();
-            _player1 = new Boxer(random)
+            _player1 = new Boxer
             {
                 Health = 200,
                 Stamina = 10,
                 Strength = 5
             };
-            _player2 = new Boxer(random)
+            _player2 = new Boxer
             {
                 Health = 110,
                 Stamina = 9,
