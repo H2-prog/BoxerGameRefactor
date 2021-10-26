@@ -6,15 +6,15 @@ namespace BoxerGamerRefactor
     {
         public string Title { get; set; }
         public ConsoleKey Key { get; set; }
-        public int Player1Modifier { get; set; }
-        public int Player2Modifier { get; set; }
+        public int PlayerModifier { get; set; }
+        public int ComputerModifier { get; set; }
 
-        public BoxerAttack(string title, ConsoleKey key, int player1Modifier, int player2Modifier)
+        public BoxerAttack(string title, ConsoleKey key, int playerModifier, int computerModifier)
         {
             Title = title;
             Key = key;
-            Player1Modifier = player1Modifier;
-            Player2Modifier = player2Modifier;
+            PlayerModifier = playerModifier;
+            ComputerModifier = computerModifier;
         }
     }
 }

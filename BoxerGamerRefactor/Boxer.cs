@@ -23,7 +23,7 @@ namespace BoxerGamerRefactor
         public int Stamina { get; set; }
         public int StartStamina { get; set; }
         public int Victories { get; set; }
-        public bool Dead { get => Health <= 0; }
+        public bool Knockedout { get => Health <= 0; }
 
         public BoxerRegenResult Regen()
         {

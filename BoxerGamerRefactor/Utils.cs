@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace BoxerGamerRefactor
 {
     public static class Utils
     {
         private static Random _random = new Random();
+
+        public static int GetRandomIndexOfCollection<T>(IEnumerable<T> collection)
+        {
+            return _random.Next(0, collection.Count());
+        }
 
         public static double CalculatePercent(double a, double b)
         {

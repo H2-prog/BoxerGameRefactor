@@ -8,12 +8,33 @@ namespace BoxerGamerRefactor
 {
     public interface IBoxerGameInputHandler
     {
+        BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks, out ConsoleKey consoleKey);
+
         string ReadString(string text);
         int ReadInt(string text);
     }
 
     public class BoxerGameInputHandler : IBoxerGameInputHandler
     {
+        public BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks, out ConsoleKey consoleKey)
+        {
+            Console.WriteLine("");
+            foreach (var attack in attacks)
+            {
+                Console.WriteLine($"Press = {attack.Key} = for a {attack.Title}");
+            }
+            Console.WriteLine("Which attack do you want to perform");
+            var consoleInput = Console.ReadKey(true);
+            consoleKey = consoleInput.Key;
+
+            var choosenAttack = (attacks.Where(x => x.Key == consoleInput.Key)).FirstOrDefault();
+            if (choosenAttack == null)
+            {
+                Console.WriteLine("It was not the you were told to press!");
+            }
+            return choosenAttack;
+        }
+
         public string ReadString(string text)
         {
             Console.WriteLine(text);

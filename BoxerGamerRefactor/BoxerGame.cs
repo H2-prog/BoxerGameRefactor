@@ -12,6 +12,7 @@ namespace BoxerGamerRefactor
         private IBoxerGameController GameController { get; set; }
         private IBoxerGameRenderer Renderer { get; set; }
         private IBoxerGameInputHandler Input { get; set; }
+        private IBoxerGameAIHandler AIHandler { get; set; }
 
         private Boxer _player;
         private Boxer _computer;
@@ -35,6 +36,7 @@ namespace BoxerGamerRefactor
             GameController = ServiceProvider.GetService<IBoxerGameController>();
             Renderer = ServiceProvider.GetService<IBoxerGameRenderer>();
             Input = ServiceProvider.GetService<IBoxerGameInputHandler>();
+            AIHandler = ServiceProvider.GetService<IBoxerGameAIHandler>();
         }
 
         public override void Start()
@@ -48,7 +50,7 @@ namespace BoxerGamerRefactor
         {
             for (int round = 0; round < _rounds; round++)
             {
-                if (_player.Dead || _computer.Dead)
+                if (_player.Knockedout || _computer.Knockedout)
                 {
                     _player.Health = 200;
                     _computer.Health = 110;
@@ -63,56 +65,46 @@ namespace BoxerGamerRefactor
                 {
                     RenderBoxerStats(round, attack);
 
-                    if (_player.Dead || _computer.Dead)
+                    if(GameController.HasRoundEnded(_player, _computer, Renderer))
                     {
                         break;
                     }
 
                     if (_playersTurn)
                     {
-                        var consoleInput = ScreenViews.ShowAndChooseAttack(_attacks);
-                        var choosenAttack = (_attacks.Where(x => x.Key == consoleInput.Key)).FirstOrDefault();
-                        if (choosenAttack == null)
+                        var choosenAttack = Input.ChooseAttack(_attacks, out ConsoleKey key);
+                        if(key == ConsoleKey.Escape)
                         {
-                            switch (consoleInput.Key)
-                            {
-                                case ConsoleKey.Escape: Exit(); break;
-                                default: ScreenViews.AddText("It was not the you were told to press!"); break;
-                            }
-                            continue;
+                            Exit();
+                            return;
                         }
-                        GameController.AttackBoxer(_player, _computer, choosenAttack);
+                        _computer.Damage(choosenAttack.PlayerModifier);
+                        //GameController.AttackBoxer(_player, _computer, choosenAttack);
                         Trace.WriteLine($"Player: {_player.Health}/{_player.StartHealth} ({Utils.CalculatePercent(_player.Health, _player.StartHealth)}%)");
                         Trace.WriteLine($"Computer: {_computer.Health}/{_computer.StartHealth} ({Utils.CalculatePercent(_computer.Health, _computer.StartHealth)}%)");
                         Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                     }
                     else
                     {
+                        var choosenAttack = AIHandler.ChooseRandomAttackIn(_attacks);
+                        _player.Damage(choosenAttack.ComputerModifier);
                         Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                     }
                 }
 
-                if (_computer.Dead)
+                if (_computer.Knockedout)
                 {
-                    ScreenViews.AddEmptyLine();
-                    ScreenViews.AddText($"{_player.Name} knocked down {_computer.Name} number of knock downs {++_player.Victories}");
+                    Renderer.AddEmptyLine();
+                    Renderer.RenderText($"{_player.Name} knocked down {_computer.Name} number of knock downs {++_player.Victories}", 2, 20);
                 }
-                else if (_player.Dead)
+                else if (_player.Knockedout)
                 {
-                    ScreenViews.AddEmptyLine();
-                    ScreenViews.AddText($"{_computer.Name} knocked down {_player.Name} number of knock downs {++_computer.Victories}");
-                }
-
-                if (_player.Dead || _computer.Dead)
-                {
-                    ScreenViews.AddEmptyLine();
-                    ScreenViews.AddText($"{_player.Name} Has won {_player.Victories} Times");
-                    ScreenViews.AddText($"{_computer.Name} Has won {_computer.Victories} Times");
-                    ScreenViews.AddEmptyLine();
-                    ScreenViews.AddText("############################## We have a Winner ##################################");
-                    round++;
+                    Renderer.AddEmptyLine();
+                    Renderer.RenderText($"{_player.Name} knocked down {_computer.Name} number of knock downs {++_player.Victories}", 2, 20);
                 }
             }
+
+            RenderMatchWinner();
 
             /*
             if (GameController.HasRoundEnded(_boxingSimmatches, _rounds))
@@ -209,6 +201,30 @@ namespace BoxerGamerRefactor
                 ScreenViews.AddSeperator();
             }
             */
+        }
+
+        private void RenderMatchWinner()
+        {
+            Renderer.AddEmptyLine();
+            Console.WriteLine("Match over!");
+            Console.WriteLine(_player.Name + " Has won " + _player.Victories + " Times");
+            Console.WriteLine(_computer.Name + " Has won " + _computer.Victories + " Times");
+
+            Renderer.AddEmptyLine();
+            if (_player.Victories > _computer.Victories)
+            {
+                Console.WriteLine($"{_player.Name} is the winner!");
+            }
+            else if (_computer.Victories > _player.Victories)
+            {
+                Console.WriteLine($"{_computer.Name} is the winner!");
+            }
+            else
+            {
+                Console.WriteLine("The match is a draw!");
+            }
+
+            Console.ReadKey();
         }
 
         private void RenderBoxerStats(int round, int attack)

@@ -7,11 +7,12 @@ namespace BoxerGamerRefactor
     public interface IBoxerGameRenderer
     {
         void RenderBoxerStats(Boxer boxer, int startLeft, int startTop);
-        void RenderBoxerCharacters(int startLeft, int startTop);
+        void RenderBoxerCharacters(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray);
         string GenerateBar(double percent, char barCharacter, int barLength);
 
         void RenderText(string text, int startLeft, int startTop);
 
+        void AddEmptyLine(uint lines = 1);
         void ClearLine(int lineToClear);
         void Clear();
     }
@@ -39,9 +40,15 @@ namespace BoxerGamerRefactor
             Console.WriteLine($"Victories: {boxer.Victories}");
         }
 
-        public void RenderBoxerCharacters(int startLeft, int startTop)
+        public void RenderBoxerCharacters(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray)
         {
-            BoxerGraphics.RenderCharacterTPose(startLeft, startTop);
+            Console.ForegroundColor = foregroundColor;
+            Console.SetCursorPosition(startLeft, startTop + 0);
+            Console.WriteLine(" 0");
+            Console.SetCursorPosition(startLeft, startTop + 1);
+            Console.WriteLine("/|\\");
+            Console.SetCursorPosition(startLeft, startTop + 2);
+            Console.WriteLine("/ \\");
         }
 
         public string GenerateBar(double percent, char barCharacter, int barLength)
@@ -60,6 +67,19 @@ namespace BoxerGamerRefactor
             ClearLine(startTop);
             Console.SetCursorPosition(startLeft, startTop);
             Console.WriteLine(text);
+        }
+
+        public void AddEmptyLine(uint lines = 1)
+        {
+            if (lines == uint.MinValue)
+            {
+                lines = 1;
+            }
+
+            for (int i = 0; i < lines; i++)
+            {
+                Console.WriteLine("");
+            }
         }
 
         public void ClearLine(int lineToClear)
