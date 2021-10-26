@@ -9,6 +9,10 @@ namespace BoxerGamerRefactor
 {
     public class BoxerGame : ConsoleGame
     {
+        const int SECONDS_BETWEEN_ATTACK = 2;
+        const int SECONDS_BETWEEN_ROUND = 5;
+        const int MAX_ATTACKS = 10;
+
         private IBoxerGameController GameController { get; set; }
         private IBoxerGameRenderer Renderer { get; set; }
         private IBoxerGameInputHandler Input { get; set; }
@@ -18,9 +22,6 @@ namespace BoxerGamerRefactor
         private Boxer _computer;
         private int _rounds;
         private bool _playersTurn = true;
-
-        const int SECONDS_BETWEEN_ATTACK = 1;
-        const int MAX_ATTACKS = 10;
 
         private List<BoxerAttack> _attacks = new List<BoxerAttack>
         {
@@ -40,24 +41,24 @@ namespace BoxerGamerRefactor
         public override void Start()
         {
             InitializeBoxers();
-            _player.Name = Input.ReadString("Enter your name");
-            _rounds = Input.ReadInt("How many rounds do you want to fight");
+            _player.Name = Input.ReadStringWithText("Enter your name");
+            _rounds = Input.ReadIntWithText("How many rounds do you want to fight");
         }
 
         public override void Update()
         {
-            for (int round = 0; round < _rounds; round++)
+            for (int round = 1; round <= _rounds; round++)
             {
-                if (_player.Knockedout || _computer.Knockedout)
+                if (GameController.HasRoundEnded(_player, _computer))
                 {
-                    _player.Health = 200;
-                    _computer.Health = 110;
+                    _player.Health = _player.StartHealth;
+                    _computer.Health = _computer.StartHealth;
 
                     // Wait for 10 seconds...
-                    ScreenViews.GetReadyForNextRound(round);
+                    Renderer.RenderText($"================= Round {round} has ended get ready for the next round =================", 2, 26);
                     Thread.Sleep(10 * 1000);
                 }
-                ScreenViews.AddEmptyLine();
+                Renderer.AddEmptyLine();
 
                 for (int attack = 0; attack < MAX_ATTACKS; attack++)
                 {
@@ -68,35 +69,12 @@ namespace BoxerGamerRefactor
                         break;
                     }
 
-                    if (_playersTurn)
-                    {
-                        var choosenAttack = Input.ChooseAttack(_attacks, out ConsoleKey key);
-                        ListenForEscapeKey(key);
-                        if (choosenAttack != null)
-                        {
-                            _computer.Damage(choosenAttack.PlayerModifier);
-                        }
-                        Trace.WriteLine($"Player: {_player.Health}/{_player.StartHealth} ({Utils.CalculatePercent(_player.Health, _player.StartHealth)}%)");
-                        Trace.WriteLine($"Computer: {_computer.Health}/{_computer.StartHealth} ({Utils.CalculatePercent(_computer.Health, _computer.StartHealth)}%)");
-                    }
-                    else
-                    {
-                        var choosenAttack = AIHandler.ChooseRandomAttackIn(_attacks);
-                        _player.Damage(choosenAttack.ComputerModifier);
-                    }
+                    GameController.Attack(_playersTurn, _attacks, _player, _computer);
                     Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
                 }
 
-                if (_computer.Knockedout)
-                {
-                    Renderer.AddEmptyLine();
-                    Renderer.RenderText($"{_player.Name} knocked down {_computer.Name} number of knock downs {++_player.Victories}", 2, 20);
-                }
-                else if (_player.Knockedout)
-                {
-                    Renderer.AddEmptyLine();
-                    Renderer.RenderText($"{_player.Name} knocked down {_computer.Name} number of knock downs {++_player.Victories}", 2, 20);
-                }
+                RenderRoundWinner();
+                Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
             }
 
             RenderMatchWinner();
@@ -198,46 +176,61 @@ namespace BoxerGamerRefactor
             */
         }
 
-        private void ListenForEscapeKey(ConsoleKey key)
+        private void RenderRoundWinner()
         {
-            if (key == ConsoleKey.Escape)
+            Renderer.AddEmptyLine();
+            Renderer.RenderText("Round over!", 2, 12);
+            Renderer.RenderText($"{_player.Name} has {_player.Health} left", 2, 13);
+            Renderer.RenderText($"{_computer.Name} has {_computer.Health} left", 2, 14);
+            Renderer.ClearLine(15);
+
+            if (_player.Health > _computer.Health || _computer.Knockedout)
             {
-                Exit();
-                return;
+                Renderer.RenderText($"{_player.Name} wins the round!", 2, 16);
+                Renderer.RenderWinnerCharacter(11, 6, ConsoleColor.Blue);
+            }
+            else if (_computer.Health > _player.Health || _player.Knockedout)
+            {
+                Renderer.RenderText($"{_computer.Name} wins the round!", 2, 16);
+                Renderer.RenderWinnerCharacter(19, 6, ConsoleColor.Red);
+            }
+            else
+            {
+                Renderer.RenderText("The round is a draw!", 2, 16);
             }
         }
 
         private void RenderMatchWinner()
         {
             Renderer.AddEmptyLine();
-            Console.WriteLine("Match over!");
-            Console.WriteLine(_player.Name + " Has won " + _player.Victories + " Times");
-            Console.WriteLine(_computer.Name + " Has won " + _computer.Victories + " Times");
+            Renderer.RenderText("Match over!", 2, 12);
+            Renderer.RenderText($"{_player.Name} Has won {_player.Victories} Times", 2, 13);
+            Renderer.RenderText($"{_computer.Name} Has won {_computer.Victories} Times", 2, 14);
+            Renderer.ClearLine(15);
 
-            Renderer.AddEmptyLine();
             if (_player.Victories > _computer.Victories)
             {
-                Console.WriteLine($"{_player.Name} is the winner!");
+                Renderer.RenderText($"{_player.Name} is the winner!", 2, 16);
+                Renderer.RenderWinnerCharacter(15, 6, ConsoleColor.Blue);
             }
             else if (_computer.Victories > _player.Victories)
             {
-                Console.WriteLine($"{_computer.Name} is the winner!");
+                Renderer.RenderText($"{_computer.Name} is the winner!", 2, 16);
+                Renderer.RenderWinnerCharacter(15, 6, ConsoleColor.Red);
             }
             else
             {
-                Console.WriteLine("The match is a draw!");
+                Renderer.RenderText("The match is a draw!", 2, 16);
             }
-
-            Console.ReadKey();
         }
 
         private void RenderBoxerStats(int round, int attack)
         {
             Renderer.Clear();
             Renderer.RenderBoxerStats(_player, 2, 1);
-            Renderer.RenderBoxerCharacters(13, 6);
+            Renderer.RenderBoxerCharacter(13, 6);
             Renderer.RenderBoxerStats(_computer, 18, 1);
-            Renderer.RenderBoxerCharacters(17, 6);
+            Renderer.RenderBoxerCharacter(17, 6);
 
             RenderRoundAndAttack(round, attack);
             RenderTurnByAttack(attack);
@@ -252,29 +245,29 @@ namespace BoxerGamerRefactor
         {
             _playersTurn = attack % 2 == 0;
             Boxer attacker = _playersTurn ? _player : _computer;
-            Boxer opponent = _playersTurn ? _computer : _player;
-            Renderer.RenderText($"Turn {attacker.Name}", 2, 10);
+            Renderer.RenderText($"{attacker.Name}s turn", 2, 10);
         }
 
         private void InitializeBoxers()
         {
             _player = new Boxer
             {
-                Health = 200,
                 StartHealth = 200,
-                Stamina = 10,
                 StartStamina = 10,
                 Strength = 5
             };
+            _player.Health = _player.StartHealth;
+            _player.Stamina = _player.StartStamina;
+
             _computer = new Boxer
             {
                 Name = "Computer",
-                Health = 110,
                 StartHealth = 110,
-                Stamina = 9,
                 StartStamina = 9,
                 Strength = 15
             };
+            _computer.Health = _computer.StartHealth;
+            _computer.Stamina = _computer.StartStamina;
         }
     }
 }

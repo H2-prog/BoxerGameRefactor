@@ -8,10 +8,10 @@ namespace BoxerGamerRefactor
 {
     public interface IBoxerGameInputHandler
     {
-        BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks, out ConsoleKey consoleKey);
+        BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks);
 
-        string ReadString(string text);
-        int ReadInt(string text);
+        string ReadStringWithText(string text);
+        int ReadIntWithText(string text);
     }
 
     public class BoxerGameInputHandler : IBoxerGameInputHandler
@@ -23,7 +23,7 @@ namespace BoxerGamerRefactor
             Renderer = renderer;
         }
 
-        public BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks, out ConsoleKey consoleKey)
+        public BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks)
         {
             int top = 12;
             Renderer.RenderText("====== Choose an Attack ======", 2, top);
@@ -39,23 +39,17 @@ namespace BoxerGamerRefactor
                 Console.WriteLine($" for a {attack.Title}");
             }
             var consoleInput = Console.ReadKey(true);
-            consoleKey = consoleInput.Key;
-
             var choosenAttack = (attacks.Where(x => x.Key == consoleInput.Key)).FirstOrDefault();
-            if (choosenAttack == null)
-            {
-                Console.WriteLine("It was not the you were told to press!");
-            }
             return choosenAttack;
         }
 
-        public string ReadString(string text)
+        public string ReadStringWithText(string text)
         {
             Console.WriteLine(text);
             return GetInputAsString();
         }
 
-        public int ReadInt(string text)
+        public int ReadIntWithText(string text)
         {
             Console.WriteLine(text);
             return GetInputAsInt();

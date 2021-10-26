@@ -1,19 +1,26 @@
-﻿namespace BoxerGamerRefactor
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+
+namespace BoxerGamerRefactor
 {
     public interface IBoxerGameController
     {
         bool HasRoundEnded(Boxer player, Boxer computer);
-
-        void AttackBoxer(Boxer player1, Boxer player2, BoxerAttack boxerAttack);
-        void RegenBoxer(Boxer boxer);
+        void Attack(bool playersTurn, IEnumerable<BoxerAttack> attacks, Boxer player, Boxer computer);
     }
 
     public class BoxerGameController : IBoxerGameController
     {
+        private IBoxerGameInputHandler InputHandler { get; }
+        private IBoxerGameAIHandler AIHandler { get; }
         private IBoxerGameRenderer Renderer { get; }
 
-        public BoxerGameController(IBoxerGameRenderer renderer)
+        public BoxerGameController(IBoxerGameInputHandler inputHandler, IBoxerGameAIHandler aiHandler, IBoxerGameRenderer renderer)
         {
+            InputHandler = inputHandler;
+            AIHandler = aiHandler;
             Renderer = renderer;
         }
 
@@ -21,30 +28,39 @@
         {
             CheckIfBoxerIsKnockedOut(player, computer);
             CheckIfBoxerIsKnockedOut(computer, player);
-            return player.Knockedout && computer.Knockedout;
+            return player.Knockedout || computer.Knockedout;
         }
 
-        public void AttackBoxer(Boxer player1, Boxer player2, BoxerAttack boxerAttack)
+        public void Attack(bool playersTurn, IEnumerable<BoxerAttack> attacks, Boxer player, Boxer computer)
         {
-            var player1DamageResult = player1.Damage(boxerAttack.ComputerModifier);
-            var player2DamageResult = player2.Damage(boxerAttack.PlayerModifier);
-
-            ScreenViews.ShowBoxerHitMessage(player1, player2, player2DamageResult);
-            ScreenViews.ShowBoxerHitMessage(player2, player1, player1DamageResult);
-
-            //RegenBoxer(player1);
-            //RegenBoxer(player2);
-        }
-
-        public void RegenBoxer(Boxer boxer)
-        {
-            var boxerRegen = boxer.Regen();
-            System.Console.WriteLine($"{boxer.Name} Regains some of his stamina back and recives {boxerRegen.RegenAmount} health, now {boxer.Name} has {boxerRegen.NewHealth} health");
+            var message = "";
+            if (playersTurn)
+            {
+                var choosenAttack = InputHandler.ChooseAttack(attacks);
+                if (choosenAttack == null)
+                {
+                    Console.WriteLine("It was not the you were told to press!");
+                }
+                else 
+                {
+                    var damageResult = computer.Damage(choosenAttack.PlayerModifier);
+                    message = $"{player.Name} Hits {computer.Name} for {damageResult.Damage}, {computer.Name} takes {damageResult.Damage} Damage, {computer.Name} now has {damageResult.NewHealth} health left";
+                }
+            }
+            else
+            {
+                Thread.Sleep(500);
+                var choosenAttack = AIHandler.ChooseRandomAttackIn(attacks);
+                var damageResult = player.Damage(choosenAttack.ComputerModifier);
+                message = $"{computer.Name} Hits {player.Name} for {damageResult.Damage}, {player.Name} takes {damageResult.Damage} Damage, {player.Name} now has {damageResult.NewHealth} health left";
+            }
+            Renderer.RenderText("====== Log ======", 2, 17);
+            Renderer.RenderText(message, 2, 18);
         }
 
         private void CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim)
         {
-            if (victim.Health <= 0)
+            if (victim.Knockedout)
             {
                 attacker.Victories++;
                 Renderer.RenderText($"{attacker.Name} knocked down {victim.Name}. Number of knock downs {attacker.Victories}", 2, 20);

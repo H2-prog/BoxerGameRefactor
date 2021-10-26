@@ -7,7 +7,8 @@ namespace BoxerGamerRefactor
     public interface IBoxerGameRenderer
     {
         void RenderBoxerStats(Boxer boxer, int startLeft, int startTop);
-        void RenderBoxerCharacters(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray);
+        void RenderBoxerCharacter(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray);
+        void RenderWinnerCharacter(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray);
         string GenerateBar(double percent, char barCharacter, int barLength);
 
         void RenderText(string text, int startLeft, int startTop);
@@ -40,7 +41,7 @@ namespace BoxerGamerRefactor
             Console.WriteLine($"Victories: {boxer.Victories}");
         }
 
-        public void RenderBoxerCharacters(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray)
+        public void RenderBoxerCharacter(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray)
         {
             Console.ForegroundColor = foregroundColor;
             Console.SetCursorPosition(startLeft, startTop + 0);
@@ -49,6 +50,16 @@ namespace BoxerGamerRefactor
             Console.WriteLine("/|\\");
             Console.SetCursorPosition(startLeft, startTop + 2);
             Console.WriteLine("/ \\");
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        public void RenderWinnerCharacter(int startLeft, int startTop, ConsoleColor foregroundColor = ConsoleColor.Gray)
+        {
+            Console.ForegroundColor = foregroundColor;
+            RenderText("\\0/", startLeft, startTop + 0);
+            RenderText(" |", startLeft, startTop + 1);
+            RenderText("/ \\", startLeft, startTop + 2);
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
 
         public string GenerateBar(double percent, char barCharacter, int barLength)
