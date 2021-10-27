@@ -10,7 +10,7 @@ namespace BoxerGamerRefactor
     {
         BoxerAttack ChooseAttack(IEnumerable<BoxerAttack> attacks);
 
-        string ReadStringWithText(string text);
+        string ReadStringWithText(string text, int startLeft, int startTop);
         int ReadIntWithText(string text);
     }
 
@@ -43,9 +43,9 @@ namespace BoxerGamerRefactor
             return choosenAttack;
         }
 
-        public string ReadStringWithText(string text)
+        public string ReadStringWithText(string text, int startLeft, int startTop)
         {
-            Console.WriteLine(text);
+            Renderer.RenderText(text, startLeft, startTop);
             return GetInputAsString();
         }
 

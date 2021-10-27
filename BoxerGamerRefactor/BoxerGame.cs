@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ namespace BoxerGamerRefactor
         private Boxer _computer;
         private int _rounds;
         private bool _playersTurn = true;
+        private bool _matchIsDone = false;
 
         private List<BoxerAttack> _attacks = new List<BoxerAttack>
         {
@@ -39,7 +41,7 @@ namespace BoxerGamerRefactor
         public override void Start()
         {
             InitializeBoxers();
-            _player.Name = Input.ReadStringWithText("Enter your name");
+            _player.Name = Input.ReadStringWithText("Enter your name", 0, 0);
             _rounds = Input.ReadIntWithText("How many rounds do you want to fight");
         }
 
@@ -60,10 +62,7 @@ namespace BoxerGamerRefactor
                     GameController.CheckIfBoxerIsKnockedOut(_player, _computer);
                     GameController.CheckIfBoxerIsKnockedOut(_computer, _player);
 
-                    if (GameController.HasRoundEnded(_player, _computer))
-                    {
-                        break;
-                    }
+                    if (GameController.HasRoundEnded(_player, _computer)) { break; }
 
                     GameController.Attack(_playersTurn, _attacks, _player, _computer);
                     Thread.Sleep(SECONDS_BETWEEN_ATTACK * 1000);
@@ -74,6 +73,25 @@ namespace BoxerGamerRefactor
             }
 
             RenderMatchWinner();
+            AskUserForRematch();
+        }
+
+        private void AskUserForRematch()
+        {
+            if(_matchIsDone)
+            {
+                var input = Input.ReadStringWithText("Want to take a rematch (Y/n)?", 2, 20);
+                Thread.Sleep(500);
+                if(input.ToLower() == "y")
+                {
+                    _matchIsDone = false;
+                    Start();
+                }
+                else
+                {
+                    Exit();
+                }
+            }
         }
 
         private void RenderRoundWinner()
@@ -122,6 +140,7 @@ namespace BoxerGamerRefactor
             {
                 Renderer.RenderText("The match is a draw!", 2, 16);
             }
+            _matchIsDone = true;
         }
 
         private void RenderBoxerStats(int round, int attack)
