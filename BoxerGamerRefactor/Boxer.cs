@@ -28,7 +28,9 @@ namespace BoxerGamerRefactor
         public BoxerRegenResult Regen()
         {
             var regen = Utils.CalculateRegen(this);
-            Health += regen;
+            var minHealth = (int)Math.Ceiling((double)StartHealth / 2.0);
+            Health +=  Math.Clamp(regen, minHealth, StartHealth);
+            Stamina -=  Math.Clamp(regen, 0, StartStamina);
             return new BoxerRegenResult { NewHealth = Health, RegenAmount = regen };
         }
 

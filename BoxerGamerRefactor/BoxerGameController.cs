@@ -9,6 +9,7 @@ namespace BoxerGamerRefactor
     {
         bool HasRoundEnded(Boxer player, Boxer computer);
         bool CheckIfBoxerIsKnockedOut(Boxer attacker, Boxer victim);
+        void RegenBoxers(Boxer player, Boxer computer);
         void Attack(bool playersTurn, IEnumerable<BoxerAttack> attacks, Boxer player, Boxer computer);
     }
 
@@ -28,6 +29,12 @@ namespace BoxerGamerRefactor
         public bool HasRoundEnded(Boxer player, Boxer computer)
         {
             return player.Knockedout || computer.Knockedout;
+        }
+
+        public void RegenBoxers(Boxer player, Boxer computer)
+        {
+            var d = player.Regen();
+            d = computer.Regen();
         }
 
         public void Attack(bool playersTurn, IEnumerable<BoxerAttack> attacks, Boxer player, Boxer computer)

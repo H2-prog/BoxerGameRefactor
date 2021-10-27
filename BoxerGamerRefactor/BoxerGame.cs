@@ -41,6 +41,7 @@ namespace BoxerGamerRefactor
         public override void Start()
         {
             InitializeBoxers();
+            Renderer.Clear();
             _player.Name = Input.ReadStringWithText("Enter your name", 0, 0);
             _rounds = Input.ReadIntWithText("How many rounds do you want to fight");
         }
@@ -70,23 +71,11 @@ namespace BoxerGamerRefactor
 
                 RenderRoundWinner();
                 Thread.Sleep(SECONDS_BETWEEN_ROUND * 1000);
-                RegenerateHealthAfterRound();
+                GameController.RegenBoxers(_player, _computer);
             }
 
             RenderMatchWinner();
             AskUserForRematch();
-        }
-
-        private void RegenerateHealthAfterRound()
-        {
-            if(_playersTurn)
-            {
-                _computer.Regen();
-            }
-            else
-            {
-                _player.Regen();
-            }
         }
 
         private void AskUserForRematch()
@@ -185,7 +174,7 @@ namespace BoxerGamerRefactor
             _player = new Boxer
             {
                 StartHealth = 200,
-                StartStamina = 10,
+                StartStamina = 75,
                 Strength = 5
             };
             _player.Health = _player.StartHealth;
@@ -195,7 +184,7 @@ namespace BoxerGamerRefactor
             {
                 Name = "Computer",
                 StartHealth = 110,
-                StartStamina = 9,
+                StartStamina = 125,
                 Strength = 15
             };
             _computer.Health = _computer.StartHealth;

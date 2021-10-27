@@ -20,7 +20,8 @@ namespace BoxerGamerRefactor
 
         public static int CalculateRegen(Boxer boxer)
         {
-            return _random.Next(0, boxer.Stamina);
+            var stamina = Math.Clamp(boxer.Stamina, 0, boxer.StartStamina);
+            return _random.Next(0, stamina);
         }
 
         public static int CalculateDamage(Boxer boxer, int modifier)
