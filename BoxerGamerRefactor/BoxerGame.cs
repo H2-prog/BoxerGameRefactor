@@ -55,7 +55,7 @@ namespace BoxerGamerRefactor
                     _computer.Health = _computer.StartHealth;
                 }
 
-                for (int attack = 0; attack < MAX_ATTACKS; attack++)
+                for (int attack = 1; attack <= MAX_ATTACKS; attack++)
                 {
                     RenderBoxerStats(round, attack);
 
