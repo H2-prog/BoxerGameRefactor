@@ -70,10 +70,23 @@ namespace BoxerGamerRefactor
 
                 RenderRoundWinner();
                 Thread.Sleep(SECONDS_BETWEEN_ROUND * 1000);
+                RegenerateHealthAfterRound();
             }
 
             RenderMatchWinner();
             AskUserForRematch();
+        }
+
+        private void RegenerateHealthAfterRound()
+        {
+            if(_playersTurn)
+            {
+                _computer.Regen();
+            }
+            else
+            {
+                _player.Regen();
+            }
         }
 
         private void AskUserForRematch()
